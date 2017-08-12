@@ -8,11 +8,14 @@ PROJECT = octree
 FORMAT = .c
 
 # Nome do arquivo principal
-TARGET = $(PROJECT)$(FORMAT)
+SOURCE = $(PROJECT)$(FORMAT)
+# A razão para usarmos executáveis com .bin é para que o .gitignore possa ignorá-los
+EXECUTABLE = $(PROJECT)$(OUTPUTFORMAT)
+
 
 #Saída
 OUTPUTFLAG = -o
-OUTPUT = $(OUTPUTFLAG)$(PROJECT).bin
+OUTPUTFORMAT = .bin
 
 # Bibliotecas:
 LIBS = src/
@@ -39,20 +42,20 @@ DEBUGGING = valgrind
 FLAGS = --leak-check=full
 
 all:
-	$(CC) $(CFLAGS) $(TARGET) $(OUTPUT) $(LIBS)* -I$(INCLUDES)
+	$(CC) $(CFLAGS) $(SOURCE) $(OUTPUTFLAG) $(EXECUTABLE) $(LIBS)* -I$(INCLUDES)
 
 run:
-	$(RUN)$(PROJECT)
+	$(RUN)$(EXECUTABLE)
 
 leak:
 	$(MAKE) clean
 	$(MAKE) all
-	$(DEBUGGING) $(FLAGS) $(RUN)$(PROJECT)
+	$(DEBUGGING) $(FLAGS) $(RUN)$(EXECUTABLE)
 
 clean:
-	rm $(PROJECT)
+	rm $(EXECUTABLE)
 
 install:
 	mkdir -p src
 	mkdir -p inc
-	touch $(TARGET)
+	touch $(SOURCE)
