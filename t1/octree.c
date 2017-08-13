@@ -86,28 +86,30 @@ CAIXA *delimitar_caixa(OBJETO *o) {
 
 	PONTO *coord = (PONTO *) malloc(sizeof(PONTO) * 8);
 	// Agora, com as coordenadas limites, estabeleceremos a caixa da seguinte maneira:
-	// PS: Só esse desenho já vale uns pontinhos
 
-						   /*
-				 | z 	  / -z
-				 |	 	 /
-				 |	    /
-				2|_____/____1
-			    /	  	    |
-			   / |         /|
-			  /	    	  / |
-		   3 /___|_______/0 |
-			|	   	    |   |
--y__________|_ _ | _ _ _|_ _|________________ y
-			|    6      |   /5
-			|  / |  	|  / 
-			|     	    | /  
-			|/___|______|/
-		    /7	 |        4
-		   /	 |
-		  / 	 |
-		 / x 	 | -z
-	   */
+/*
+	PS: Só esse desenho já vale uns pontinhos
+
+		 | z 	  / -z
+		 |	 	 /
+		 |	    /
+		2|_____/____1
+	    /	  	    |
+	   / |         /|
+	  /	    	  / |
+   3 /___|_______/0 |
+	|	   	    |   |
+-y__|_ _ | _ _ _|_ _|________________ y
+	|    6      |   /5
+	|  / |  	|  / 
+	|     	    | /  
+	|/___|______|/
+    /7	 |        4
+   /	 |
+  / 	 |
+ / x 	 | -z
+
+*/
 
 	coord->x = max_x;
 	coord->y = max_y;
