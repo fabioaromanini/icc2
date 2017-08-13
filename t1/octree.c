@@ -50,6 +50,30 @@ CAIXA *delimitar_caixa(OBJETO *o) {
 
 	PONTO *coord = (PONTO *) malloc(sizeof(PONTO) * 8);
 
+// Só esse desenho já vale uns pontinhos
+
+
+						   /*
+				 | z 	  / -z
+				 |	 	 /
+				 |	    /
+				2|_____/____1
+			    / 	  	    |
+			   /           /|
+			  /	    	  / |
+		   3 /___________/0 |
+			|	   	    |   |
+-y__________|	   	    |   |________________ y
+			|           |   /6
+			|	    	|  / 
+			|      	    | /  
+			|___________|/
+		   /8	|        5
+		  /		|
+		 / 		|
+		/ x 	| -z
+	  */
+
 	coord->x = max_x;
 	coord->y = max_y;
 	coord->z = max_z;
@@ -58,14 +82,31 @@ CAIXA *delimitar_caixa(OBJETO *o) {
 	(coord + 1)->y = max_y;
 	(coord + 1)->z = max_z;
 
-
 	(coord + 2)->x = min_x;
 	(coord + 2)->y = min_y;
 	(coord + 2)->z = max_z;
 
+	(coord + 3)->x = max_x;
+	(coord + 3)->y = min_y;
+	(coord + 3)->z = max_z;
+
+	(coord + 4)->x = max_x;
+	(coord + 4)->y = max_y;
+	(coord + 4)->z = min_z;
+	
+	(coord + 5)->x = min_x;
+	(coord + 5)->y = max_y;
+	(coord + 5)->z = min_z;
+	
+	(coord + 6)->x = min_x;
+	(coord + 6)->y = min_y;
+	(coord + 6)->z = min_z;
+
+	(coord + 7)->x = max_x;
+	(coord + 7)->y = min_y;
+	(coord + 7)->z = min_z;
+
 	CAIXA *resp = (CAIXA *) malloc(sizeof(CAIXA));
-
-
 
 	resp->coordenadas = coord;
 	resp->n_coordenadas = 8;
