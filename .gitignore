@@ -1,3 +1,5 @@
+# ignora o pdf dos trabalhos
 *.pdf
+
+# ignora os executáveis gerados pela compilação
 *.bin
-*.txt

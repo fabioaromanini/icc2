@@ -1,61 +1,41 @@
-# Fábio Augusto Romanini Pinto
-# Número USP 9791312
-
 # Nome do Projeto
 PROJECT = octree
 
-# Formato
-FORMAT = .c
+# Nome dos arquivos
+SOURCE = $(PROJECT).c
+EXECUTABLE = $(PROJECT).bin
 
-# Nome do arquivo principal
-SOURCE = $(PROJECT)$(FORMAT)
-# A razão para usarmos executáveis com .bin é para que o .gitignore possa ignorá-los
-EXECUTABLE = $(PROJECT)$(OUTPUTFORMAT)
-
-
-#Saída
-OUTPUTFLAG = -o
-OUTPUTFORMAT = .bin
-
-# Bibliotecas:
-LIBS = src/
-
-# Diretório dos includes
-INCLUDES = inc/
-
-# Compilador
-CC = gcc
+# Flags
 # 	-Wall = Warnings
 # 	-g = debugar
 # 	-O3 = pra ficar bolado
-# 	-sdt=c99 = trabalhos de grafos
-CFLAGS = -g -Wall -std=c99
+#	-o = Saída
 
-# Executar
-RUN = ./
-
-# Depuração
-DEBUGGING = valgrind
-
-# Flags
-#  --leak-check=full == ver linhas linhas que estão causando leak
-FLAGS = --leak-check=full
+# Flags do valgrind
+#  --leak-check=full == ver quais linhas estão causando leak
 
 all:
-	$(CC) $(CFLAGS) $(SOURCE) $(OUTPUTFLAG) $(EXECUTABLE) $(LIBS)* -I$(INCLUDES)
+	$(MAKE) clean
+	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/
 
 run:
-	$(RUN)$(EXECUTABLE)
+	./$(EXECUTABLE)
 
 leak:
 	$(MAKE) clean
 	$(MAKE) all
-	$(DEBUGGING) $(FLAGS) $(RUN)$(EXECUTABLE)
+	valgrind --leak-check=full ./$(EXECUTABLE) < teste.txt
 
 clean:
+# Checa que existe algum executável antes de tentar remover, se não buga
+ifneq (,$(wildcard $(EXECUTABLE)))
 	rm $(EXECUTABLE)
+endif
+
+
+INFO = "Fábio Augusto Romanini Pinto\ngithub: fabioaromanini\nNúmero USP: 9791312\n\nRepositório da disciplina: github.com/fabioaromanini/icc2/\n\nA razão para usarmos executáveis com .bin é para \nque o .gitignore consiga reconhecer os arquivo facilmente.\n"
 
 install:
 	mkdir -p src
 	mkdir -p inc
-	touch $(SOURCE)
+	printf $(INFO) > README.txt

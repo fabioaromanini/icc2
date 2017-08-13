@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <bool.h>
 #include <limits.h>
+
+#include <bool.h>
 
 typedef struct {
 	double x;
@@ -14,18 +15,11 @@ typedef struct {
 	int n_coordenadas;
 } OBJETO, CAIXA;
 
-void free_objeto(OBJETO *o) {
-	free(o->coordenadas);
-	free(o);
-}
-
-void print_objeto(OBJETO *o) {
-	for(int i = 0; i < o->n_coordenadas; i++) {
-		printf("x = %lf\n", o->coordenadas[i].x);
-		printf("y = %lf\n", o->coordenadas[i].y);
-		printf("z = %lf\n", o->coordenadas[i].z);
-		printf("\n");
-	}
+OBJETO *cria_objeto(PONTO *coordenadas, int n_coordenadas) {
+	OBJETO *novo = (OBJETO *) malloc(sizeof(OBJETO));
+	novo->coordenadas = coordenadas;
+	novo->n_coordenadas = n_coordenadas;
+	return novo;
 }
 
 // Função que delimita uma caixa a partir de um objeto
@@ -55,61 +49,78 @@ CAIXA *delimitar_caixa(OBJETO *o) {
 	}
 
 	PONTO *coord = (PONTO *) malloc(sizeof(PONTO) * 8);
+
+	coord->x = max_x;
+	coord->y = max_y;
+	coord->z = max_z;
+
+	(coord + 1)->x = min_x;
+	(coord + 1)->y = max_y;
+	(coord + 1)->z = max_z;
+
+
+	(coord + 2)->x = min_x;
+	(coord + 2)->y = min_y;
+	(coord + 2)->z = max_z;
+
 	CAIXA *resp = (CAIXA *) malloc(sizeof(CAIXA));
+
+
+
 	resp->coordenadas = coord;
 	resp->n_coordenadas = 8;
 	return resp;
 }
 
+void free_objeto(OBJETO *o) {
+	free(o->coordenadas);
+	free(o);
+}
+
 int main(int argc, char *argv[]) {
 	// Primeiro, obtemos todas as informações
-	// necessárias parar esolver o problema
+	// necessárias para mapear o objeto, o ponto
+	// colisor, e a caixa delimitadora.
 	bool precisa_fazer_caixa;
 	scanf("%d%*c", (int *)(&precisa_fazer_caixa));
-
-	if(precisa_fazer_caixa) printf("Precisa fazer a caixa\n");
-	else printf("precisa ler a caixa\n");
 
 	// Altura limite para percorrer a octree
 	int h_max;
 	scanf("%d%*c", &h_max);
-	printf("A altura maxima e %d\n", h_max);
 
 	// Número de triângulos que compões o objeto
-	int n;
-	scanf("%d%*c", &n);
-	printf("O objeto possui %d triangulos\n", n);
-	int n_coordenadas = 3 * n;
+	int n_triangulos;
+	scanf("%d%*c", &n_triangulos);
 
-	PONTO *ponto_colisor = (PONTO *) malloc(sizeof(PONTO));
-	scanf("%lf%*c%lf%*c%lf%*c", &ponto_colisor->x, &ponto_colisor->y, &ponto_colisor->z);
-	printf("Obejeto colisor: %lf %lf %lf \n", ponto_colisor->x, ponto_colisor->y, ponto_colisor->z);
+	// Como cada triângulo é delimitado por 3 pontos
+	int n_pontos = 3 * n_triangulos;
 
-	PONTO *pontos_objeto = (PONTO *) malloc(sizeof(PONTO) * n_coordenadas);
-	for(int i = 0; i < n_coordenadas; i++) {
-		scanf("%lf%*c%lf%*c%lf%*c", &pontos_objeto[i].x, &pontos_objeto[i].y, &pontos_objeto[i].z);
-		printf("coordanda %d: %lf %lf %lf \n", i, pontos_objeto[i].x, pontos_objeto[i].y, pontos_objeto[i].z);
-		if(i > 0 && i % 3 == 2) printf("leu o triangulo %d\n", i / 3 + 1);
-	}
+	// Coordenadas do ponto colisor
+	PONTO ponto_colisor;
+	scanf("%lf%*c%lf%*c%lf%*c", &(ponto_colisor.x), &(ponto_colisor.y), &(ponto_colisor.z));
 
-	OBJETO *objeto = (OBJETO *) malloc(sizeof(OBJETO));
-	objeto->n_coordenadas = n_coordenadas;
-	objeto->coordenadas = pontos_objeto;
+	// Coordenadas de todos os pontos que compõe o objeto
+	PONTO *pontos_objeto = (PONTO *) malloc(sizeof(PONTO) * n_pontos);
+	for(int i = 0; i < n_pontos; i++)
+		scanf("%lf%*c%lf%*c%lf%*c", &(pontos_objeto+i)->x, &(pontos_objeto+i)->y,&(pontos_objeto+i)->z);
+
+	// Encapsularemos o vetor de coordenadas e
+	// seu tamanho em uma struct para facilitar
+	// a iteração sobre o conjunto de dados
+	OBJETO *objeto = cria_objeto(pontos_objeto, n_pontos);
 
 	CAIXA *caixa;
-	if(precisa_fazer_caixa) {
+	if(precisa_fazer_caixa)
 		caixa = delimitar_caixa(objeto);
-	}
 	else {
-		caixa = (CAIXA *) malloc(sizeof(CAIXA));
-		caixa->n_coordenadas = 8;
-		caixa->coordenadas = (PONTO *) malloc(sizeof(PONTO) * 8);
+		PONTO *pontos_caixa;
 
 		for(int i = 0; i < 8; i++)
-			scanf("%lf%*c%lf%*c%lf%*c", &caixa[i].coordenadas->x, &caixa[i].coordenadas->y, &caixa[i].coordenadas->z);
+			scanf("%lf%*c%lf%*c%lf%*c",&(pontos_caixa + i)->x,&(pontos_caixa + i)->y,&(pontos_caixa + i)->z);
+
+		caixa = cria_objeto(pontos_caixa, 8);
 	}
 
-	free(ponto_colisor);
 	free_objeto(objeto);
 	free_objeto(caixa);
 	return 0;
