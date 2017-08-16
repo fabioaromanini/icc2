@@ -1,9 +1,12 @@
 # Nome do Projeto
-PROJECT = octree
+PROJECT = colisao
 
 # Nome dos arquivos
 SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
+
+# Teste Atual
+TESTE = 3
 
 # Flags
 # 	-Wall = Warnings
@@ -20,6 +23,9 @@ all:
 
 run:
 	./$(EXECUTABLE)
+
+teste:
+	./$(EXECUTABLE) < casos/$(TESTE).in > saidas/$(TESTE).out
 
 leak:
 	$(MAKE) clean
@@ -38,4 +44,6 @@ INFO = "Fábio Augusto Romanini Pinto\ngithub: fabioaromanini\nNúmero USP: 9791
 install:
 	mkdir -p src
 	mkdir -p inc
+	mkdir -p casos
+	mkdir -p saidas
 	printf $(INFO) > README.txt

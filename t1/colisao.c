@@ -6,6 +6,9 @@
 #include <ponto.h>
 #include <objeto.h>
 
+#define MAX 0
+#define MIN 1
+
 // Função que delimita uma caixa a partir de um objeto
 CAIXA *delimitar_caixa(OBJETO *o);
 
@@ -17,23 +20,29 @@ int main(int argc, char *argv[]) {
 	// precisaremos implementá-la.
 	bool precisa_fazer_caixa;
 	scanf("%d%*c", (int *)(&precisa_fazer_caixa));
+	printf("%d\n", (int) precisa_fazer_caixa);
 
-	// Altura limite para percorrer a octree
-	int h_max;
-	scanf("%d%*c", &h_max);
+	// Numero de iterações para rodar o algoritmo
+	int n_max;
+	scanf("%d%*c", &n_max);
+	printf("%d\n", n_max);
 
 	// Número de triângulos que compõe o objeto
 	int n_triangulos;
 	scanf("%d%*c", &n_triangulos);
+	printf("%d\n", n_triangulos);
 
 	// Como cada triângulo é delimitado por 3 pontos
 	int n_pontos = 3 * n_triangulos;
 
 	// Coordenadas do ponto colisor
 	PONTO* ponto_colisor = ler_pontos(1);
+	printf("%lf %lf %lf\n", ponto_colisor->x, ponto_colisor->y, ponto_colisor->z);
 
 	// Coordenadas de todos os pontos que compõe o objeto
 	PONTO *pontos_objeto = ler_pontos(n_pontos);
+	for(int i = 0; i < n_pontos; i++)
+		printf("%lf %lf %lf\n", pontos_objeto[i].x, pontos_objeto[i].y, pontos_objeto[i].z);
 
 	// Encapsularemos o vetor de coordenadas e
 	// seu tamanho em uma struct para facilitar
@@ -47,9 +56,35 @@ int main(int argc, char *argv[]) {
 		caixa = delimitar_caixa(objeto);
 	else {
 		PONTO *pontos_caixa = ler_pontos(8);
-		caixa = cria_objeto(pontos_caixa, 8);
+		OBJETO *caixa_auxiliar = cria_objeto(pontos_caixa, 8);
+		caixa = delimitar_caixa(caixa_auxiliar);
+
+		// printf("Caixa real\n");
+		for(int i = 0; i < 8; i++)
+			printf("%lf %lf %lf\n", caixa_auxiliar->coordenadas[i].x, caixa_auxiliar->coordenadas[i].y, caixa_auxiliar->coordenadas[i].z);
+
+
+		// printf("\n\nCaixa fake\n");
+		// for(int i = 0; i < 2; i++)
+			// printf("%lf %lf %lf\n", caixa->coordenadas[i].x, caixa->coordenadas[i].y, caixa->coordenadas[i].z);
+		
+		free_objeto(caixa_auxiliar);
 	}
 
+	// Uma vez que temos os dados necessários, executaremos o 
+	// algoritmo responsável por escolher entre os 8 possíveis
+	// octantes da caixa delimitadora.
+	int nivel = 1;
+	bool colisao = TRUE;
+	while(nivel <= n_max) {
+
+		nivel++;
+	}
+
+	if(colisao)
+		printf("1\n");
+	else
+		printf("0\n");
 
 	free_objeto(objeto);
 	free_objeto(caixa);
@@ -84,67 +119,18 @@ CAIXA *delimitar_caixa(OBJETO *o) {
 			max_z = o->coordenadas[i].z;
 	}
 
-	PONTO *coord = (PONTO *) malloc(sizeof(PONTO) * 8);
-	// Agora, com as coordenadas limites, estabeleceremos a caixa da seguinte maneira:
+	PONTO *coord = (PONTO *) malloc(sizeof(PONTO) * 2);
 
-/*
-	PS: Só esse desenho já vale uns pontinhos
-
-		  | z	   / -z
-		  |		  /
-		  |		 /
-		 2|_____/____1
-	     /	  	     |
-	    / |         /|
-	   /	       / |
-	3 /___|_______/0 |
-	  |	   		 |   |
--y____|_ _| _ _ _|_ _|________________ y
-	  |   6	  	 |   /5
-	  |  /|		 |  / 
-	  |			 | /  
-	  |/__|______|/
-	  /7  |        4
-	 /	  |
-	/ x	  | -z
-
-*/
-
-	coord->x = max_x;
-	coord->y = max_y;
-	coord->z = max_z;
-
-	(coord + 1)->x = min_x;
-	(coord + 1)->y = max_y;
-	(coord + 1)->z = max_z;
-
-	(coord + 2)->x = min_x;
-	(coord + 2)->y = min_y;
-	(coord + 2)->z = max_z;
-
-	(coord + 3)->x = max_x;
-	(coord + 3)->y = min_y;
-	(coord + 3)->z = max_z;
-
-	(coord + 4)->x = max_x;
-	(coord + 4)->y = max_y;
-	(coord + 4)->z = min_z;
-	
-	(coord + 5)->x = min_x;
-	(coord + 5)->y = max_y;
-	(coord + 5)->z = min_z;
-	
-	(coord + 6)->x = min_x;
-	(coord + 6)->y = min_y;
-	(coord + 6)->z = min_z;
-
-	(coord + 7)->x = max_x;
-	(coord + 7)->y = min_y;
-	(coord + 7)->z = min_z;
+	(coord + MAX)->x = max_x;
+	(coord + MAX)->y = max_y;
+	(coord + MAX)->z = max_z;
+	(coord + MIN)->x = min_x;
+	(coord + MIN)->y = min_y;
+	(coord + MIN)->z = min_z;
 
 	CAIXA *resp = (CAIXA *) malloc(sizeof(CAIXA));
 
 	resp->coordenadas = coord;
-	resp->n_coordenadas = 8;
+	resp->n_coordenadas = 2;
 	return resp;
 }

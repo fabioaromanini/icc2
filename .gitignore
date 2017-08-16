@@ -3,3 +3,7 @@
 
 # ignora os executáveis gerados pela compilação
 *.bin
+
+# ignora os casos de teste
+**/casos
+**/saidas

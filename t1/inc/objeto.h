@@ -6,8 +6,8 @@
 
 // Essa estrutura encapsula o vetor de pontos que compõe um objeto,
 // e seu tamanho, a fim de facilitar a iteração sobre o conjunto de dados.
-// Como uma caixa é um paralelepipedo de 8 coordenadas, utilizaremos a mesma
-// estrutura de dados para representá-la.
+// Como os pontos de uma caixa são uma combinaçao de 6 coordenadas
+// tomada de 3 em 3, utilizaremos a mesma estrutura de dados para representá-la.
 
 typedef struct {
 	PONTO *coordenadas;
