@@ -1,16 +1,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
-
 #include <bool.h>
+
 #include <ponto.h>
-#include <objeto.h>
+#include <malha.h>
+#include <caixa.h>
 
-#define MAX 0
-#define MIN 1
+// Função que delimita uma caixa a partir de uma malha de triângulos
+caixa_t *delimitar_caixa_malha(malha_t *malha);
 
-// Função que delimita uma caixa a partir de um objeto
-CAIXA *delimitar_caixa(OBJETO *o);
+// Função que, a partir de uma caixa propriamente
+// dita, cria uma caixa reduzida, ou seja,
+// armazena apenas o valor máximo e mínimo de cada eixo
+caixa_t* *delimitar_caixa_caixa(caixa_t *caixa);
+
 
 int main(int argc, char *argv[]) {
 	// Primeiro, obteremos todas as informações
@@ -27,48 +31,37 @@ int main(int argc, char *argv[]) {
 	scanf("%d%*c", &n_max);
 	printf("%d\n", n_max);
 
-	// Número de triângulos que compõe o objeto
+	// Número de triângulos que compõem o objeto
 	int n_triangulos;
 	scanf("%d%*c", &n_triangulos);
 	printf("%d\n", n_triangulos);
 
-	// Como cada triângulo é delimitado por 3 pontos
-	int n_pontos = 3 * n_triangulos;
+	// Coordenadas do ponto colisor:
+	ponto_t* ponto_colisor = ler_pontos(1);
+	print_pontos(ponto_colisor, 1);
 
-	// Coordenadas do ponto colisor
-	PONTO* ponto_colisor = ler_pontos(1);
-	printf("%lf %lf %lf\n", ponto_colisor->x, ponto_colisor->y, ponto_colisor->z);
-
-	// Coordenadas de todos os pontos que compõe o objeto
-	PONTO *pontos_objeto = ler_pontos(n_pontos);
-	for(int i = 0; i < n_pontos; i++)
-		printf("%lf %lf %lf\n", pontos_objeto[i].x, pontos_objeto[i].y, pontos_objeto[i].z);
-
-	// Encapsularemos o vetor de coordenadas e
-	// seu tamanho em uma struct para facilitar
-	// a iteração sobre o conjunto de dados
-	OBJETO *objeto = cria_objeto(pontos_objeto, n_pontos);
+	// Leitura da malha de triangulos que compõem o objeto:
+	malha_t *objeto = ler_malha(n_triangulos);
+	print_malha(objeto);
 
 	// Agora que temos as coordenadas do objeto, podemos,
 	// ou fazer a caixa, ou ler ela da entrada principal
-	CAIXA *caixa;
+	caixa_t *caixa;
 	if(precisa_fazer_caixa)
-		caixa = delimitar_caixa(objeto);
+		caixa = delimitar_caixa_malha(objeto);
 	else {
-		PONTO *pontos_caixa = ler_pontos(8);
-		OBJETO *caixa_auxiliar = cria_objeto(pontos_caixa, 8);
-		caixa = delimitar_caixa(caixa_auxiliar);
-
-		// printf("Caixa real\n");
-		for(int i = 0; i < 8; i++)
-			printf("%lf %lf %lf\n", caixa_auxiliar->coordenadas[i].x, caixa_auxiliar->coordenadas[i].y, caixa_auxiliar->coordenadas[i].z);
-
-
-		// printf("\n\nCaixa fake\n");
-		// for(int i = 0; i < 2; i++)
-			// printf("%lf %lf %lf\n", caixa->coordenadas[i].x, caixa->coordenadas[i].y, caixa->coordenadas[i].z);
+		ponto_t *pontos_caixa_aux = ler_pontos(8);
+		caixa_t *caixa_aux = nova_caixa(pontos_caixa_aux, 8);
 		
-		free_objeto(caixa_auxiliar);
+		caixa = delimitar_caixa_caixa(caixa_aux);
+
+		printf("Caixa real\n");
+		print_caixa(caixa_aux);
+
+		printf("\n\nCaixa fake\n");
+		print_caixa(caixa);
+		
+		free_caixa(caixa_aux);
 	}
 
 	// Uma vez que temos os dados necessários, executaremos o 
@@ -86,14 +79,14 @@ int main(int argc, char *argv[]) {
 	else
 		printf("0\n");
 
-	free_objeto(objeto);
-	free_objeto(caixa);
-	free(ponto_colisor);
+	free_malha(objeto);
+	free_caixa(caixa);
+	free_ponto(ponto_colisor);
 
 	return 0;
 }
 
-CAIXA *delimitar_caixa(OBJETO *o) {
+caixa_t *delimitar_caixa_malha(malha_t *m) {
 	// Começamos encontrando os limites do objeto em cada eixo
 	double max_x = INT_MIN;
 	double max_y = INT_MIN;
@@ -103,34 +96,72 @@ CAIXA *delimitar_caixa(OBJETO *o) {
 	double min_y = INT_MAX;
 	double min_z = INT_MAX;
 
-	for(int i = 0; i < o->n_coordenadas; i++) {
-		if(o->coordenadas[i].x < min_x)
-			min_x = o->coordenadas[i].x;
-		if(o->coordenadas[i].y < min_y)
-			min_y = o->coordenadas[i].y;
-		if(o->coordenadas[i].z < min_z)
-			min_z = o->coordenadas[i].z;
+	for(int i = 0; i < m->n_triangulos; i++) {
+		for(int j = 0; j < 3; j++) {
+			if(m->triangulos[i][j][X] < min_x)
+				min_x = m->triangulos[i][j][X];
+			if(m->triangulos[i][j][Y] < min_y)
+				min_y = m->triangulos[i][j][Y];
+			if(m->triangulos[i][j][Z] < min_z)
+				min_z = m->triangulos[i][j][Z];
 
-		if(o->coordenadas[i].x > max_x)
-			max_x = o->coordenadas[i].x;
-		if(o->coordenadas[i].y > max_y)
-			max_y = o->coordenadas[i].y;
-		if(o->coordenadas[i].z > max_z)
-			max_z = o->coordenadas[i].z;
+			if(m->triangulos[i][j][x] > max_x)
+				max_x = m->triangulos[i][j][x];
+			if(m->triangulos[i][j][Y] > max_y)
+				max_y = m->triangulos[i][j][Y];
+			if(m->triangulos[i][j][Z] > max_z)
+				max_z = m->triangulos[i][j][Z];
+		}
 	}
 
-	PONTO *coord = (PONTO *) malloc(sizeof(PONTO) * 2);
+	ponto_t *pontos_caixa = (ponto_t *) malloc(sizeof(ponto_t) * N_PONTOS);
 
-	(coord + MAX)->x = max_x;
-	(coord + MAX)->y = max_y;
-	(coord + MAX)->z = max_z;
-	(coord + MIN)->x = min_x;
-	(coord + MIN)->y = min_y;
-	(coord + MIN)->z = min_z;
+	pontos_caixa[MAX][X] = max_x;
+	pontos_caixa[MAX][Y] = max_y;
+	pontos_caixa[MAX][Z] = max_z;
+	
+	pontos_caixa[MIN][X] = min_x;
+	pontos_caixa[MIN][Y] = min_y;
+	pontos_caixa[MIN][Z] = min_z;
 
-	CAIXA *resp = (CAIXA *) malloc(sizeof(CAIXA));
+	return nova_caixa(pontos_caixa, N_PONTOS);
+}
 
-	resp->coordenadas = coord;
-	resp->n_coordenadas = 2;
-	return resp;
+caixa_t* *delimitar_caixa_caixa(caixa_t *caixa) {
+	// Começamos encontrando os limites da caixa em cada eixo
+	double max_x = INT_MIN;
+	double max_y = INT_MIN;
+	double max_z = INT_MIN;
+
+	double min_x = INT_MAX;
+	double min_y = INT_MAX;
+	double min_z = INT_MAX;
+
+	for(int i = 0; i < caixa->n_pontos; i++) {
+		if(m->pontos[i][X] < min_x)
+			min_x = m->pontos[i][X];
+		if(m->pontos[i][Y] < min_y)
+			min_y = m->pontos[i][Y];
+		if(m->pontos[i][Z] < min_z)
+			min_z = m->pontos[i][Z];
+
+		if(m->pontos[i][x] > max_x)
+			max_x = m->pontos[i][x];
+		if(m->pontos[i][Y] > max_y)
+			max_y = m->pontos[i][Y];
+		if(m->pontos[i][Z] > max_z)
+			max_z = m->pontos[i][Z];
+	}
+
+	ponto_t *pontos_caixa = (ponto_t *) malloc(sizeof(ponto_t) * N_PONTOS);
+
+	pontos_caixa[MAX][X] = max_x;
+	pontos_caixa[MAX][Y] = max_y;
+	pontos_caixa[MAX][Z] = max_z;
+	
+	pontos_caixa[MIN][X] = min_x;
+	pontos_caixa[MIN][Y] = min_y;
+	pontos_caixa[MIN][Z] = min_z;
+
+	return nova_caixa(pontos_caixa, N_PONTOS);
 }

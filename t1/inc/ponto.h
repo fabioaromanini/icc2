@@ -4,12 +4,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef struct {
-	double x;
-	double y;
-	double z;
-} PONTO;
+// Cada ponto_t é um vetor com 3 doubles, um para cada eixo (X, Y e Z, conforme o enum)
+typedef double * ponto_t;
 
-PONTO *ler_pontos(int);
+enum {
+	X,
+	Y,
+	Z,
+	N_EIXOS
+};
+
+ponto_t *ler_pontos(int);
+void print_ponto(ponto_t);
+void free_ponto(ponto_t);
 
 #endif
