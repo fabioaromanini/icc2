@@ -10,7 +10,7 @@ ponto_t *ler_pontos(int n_linhas) {
 	return pontos;
 }
 
-void print_pontos(ponto_t p) {
+void print_ponto(ponto_t p) {
 	printf("%lf %lf %lf\n\n", p[X], p[Y], p[Z]);
 }
 

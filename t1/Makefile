@@ -6,7 +6,7 @@ SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
 
 # Teste Atual
-TESTE = 3
+TESTE = 24
 
 # Flags
 # 	-Wall = Warnings
@@ -30,7 +30,7 @@ teste:
 leak:
 	$(MAKE) clean
 	$(MAKE) all
-	valgrind --leak-check=full ./$(EXECUTABLE) < teste.txt
+	valgrind --leak-check=full ./$(EXECUTABLE) < casos/$(TESTE).in
 
 clean:
 # Checa que existe algum executável antes de tentar remover, se não buga

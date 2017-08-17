@@ -34,5 +34,6 @@ void free_malha(malha_t *m) {
 		free(m->triangulos[i]);
 	}
 
+	free(m->triangulos);
 	free(m);
 }
