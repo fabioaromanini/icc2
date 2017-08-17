@@ -5,12 +5,6 @@
 #include <stdio.h>
 #include <ponto.h>
 
-enum {
-	MIN,
-	MAX,
-	N_PONTOS
-};
-
 typedef	struct {
 	ponto_t *pontos;
 	int n_pontos;
