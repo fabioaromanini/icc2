@@ -4,9 +4,13 @@ PROJECT = colisao
 # Nome dos arquivos
 SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
+RELEASE = $(PROJECT).zip
 
-# Teste Atual
-TESTE = 24
+# Teste Unitário
+TESTE = 19
+
+# Numero máximo de testes
+N_TESTE = 24
 
 # Flags
 # 	-Wall = Warnings
@@ -17,18 +21,24 @@ TESTE = 24
 # Flags do valgrind
 #  --leak-check=full == ver quais linhas estão causando leak
 
+INFO = "Fábio Augusto Romanini Pinto\ngithub: fabioaromanini\nNúmero USP: 9791312\n\nRepositório da disciplina: github.com/fabioaromanini/icc2/\n\nA razão para usarmos executáveis com .bin é para \nque o .gitignore consiga reconhecer os arquivo facilmente.\n"
+
 all:
-	$(MAKE) clean
+	# $(MAKE) clean
 	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/
 
 run:
 	./$(EXECUTABLE)
 
+zip:
+	$(MAKE) all
+	zip $(PROJECT).zip ./$(SOURCE) ./Makefile src/* inc/*
+
 teste:
+	$(MAKE) all
 	./$(EXECUTABLE) < casos/$(TESTE).in > saidas/$(TESTE).out
 
 leak:
-	$(MAKE) clean
 	$(MAKE) all
 	valgrind --leak-check=full ./$(EXECUTABLE) < casos/$(TESTE).in
 
@@ -38,8 +48,14 @@ ifneq (,$(wildcard $(EXECUTABLE)))
 	rm $(EXECUTABLE)
 endif
 
+ifneq (,$(wildcard $(RELEASE)))
+	rm $(RELEASE)
+endif
 
-INFO = "Fábio Augusto Romanini Pinto\ngithub: fabioaromanini\nNúmero USP: 9791312\n\nRepositório da disciplina: github.com/fabioaromanini/icc2/\n\nA razão para usarmos executáveis com .bin é para \nque o .gitignore consiga reconhecer os arquivo facilmente.\n"
+cleancasos:
+ifneq (,$(wildcard casos/))
+	rm -rf casos
+endif
 
 install:
 	mkdir -p src

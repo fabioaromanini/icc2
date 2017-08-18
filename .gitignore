@@ -4,6 +4,9 @@
 # ignora os executáveis gerados pela compilação
 *.bin
 
+# ignora o "release"
+*.zip
+
 # ignora os casos de teste
 **/casos
 **/saidas

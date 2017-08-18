@@ -78,25 +78,25 @@ int main(int argc, char *argv[]) {
 	// precisaremos implementá-la.
 	bool precisa_fazer_caixa;
 	scanf("%d%*c", (int *)(&precisa_fazer_caixa));
-	printf("%d\n", (int) precisa_fazer_caixa);
+	// printf("%d\n", (int) precisa_fazer_caixa);
 
 	// Numero de iterações para rodar o algoritmo
 	int n_max;
 	scanf("%d%*c", &n_max);
-	printf("%d\n", n_max);
+	// printf("%d\n", n_max);
 
 	// Número de triângulos que compõem o objeto
 	int n_triangulos;
 	scanf("%d%*c", &n_triangulos);
-	printf("%d\n", n_triangulos);
+	// printf("%d\n", n_triangulos);
 
 	// Coordenadas do ponto colisor:
 	ponto_t* ponto_colisor = ler_pontos(1);
-	print_ponto(*ponto_colisor);
+	// print_ponto(*ponto_colisor);
 
 	// Leitura da malha de triangulos que compõem o objeto:
 	malha_t *objeto = ler_malha(n_triangulos);
-	print_malha(objeto);
+	// print_malha(objeto);
 
 	// Agora que temos as coordenadas do objeto, podemos,
 	// ou fazer a caixa, ou ler ela da entrada principal
@@ -109,24 +109,35 @@ int main(int argc, char *argv[]) {
 		
 		caixa = caixa_para_caixa_reduzida(caixa_aux);
 
-		printf("Caixa real\n");
-		print_caixa(caixa_aux);
+		// printf("Caixa real\n");
+		// print_caixa(caixa_aux);
 		
 		free_caixa(caixa_aux);
 	}
 
-	printf("\n\nCaixa fake\n");
-	print_caixa(caixa);
+	// printf("\n\nCaixa fake\n");
+	// print_caixa(caixa);
 
 	// Uma vez que temos os dados necessários, executaremos o 
 	// algoritmo responsável por escolher entre os 8 possíveis
-	// octantes da caixa delimitadora.
-	int nivel = 1;
-	bool colisao = TRUE;
-	while(nivel <= n_max) {
+	// octantes da caixa 
 
-		nivel++;
-	}
+
+	// Começaremos verificando se o ponto colisor
+	// está dentro da caixa delimitadora
+	bool colisao = TRUE;
+	if((*ponto_colisor)[X] > caixa->pontos[MAX][X] ||
+	  (*ponto_colisor)[X] < caixa->pontos[MIN][X] ||
+	  (*ponto_colisor)[Y] > caixa->pontos[MAX][Y] ||
+	  (*ponto_colisor)[Y] < caixa->pontos[MIN][Y] ||
+	  (*ponto_colisor)[Z] > caixa->pontos[MAX][Z] ||
+	  (*ponto_colisor)[Z] < caixa->pontos[MIN][Z])
+		colisao = FALSE;
+
+	// int nivel = 1;
+	// while(nivel <= n_max && colisao) {
+		// Código que escolhe os octantes
+	// }
 
 	if(colisao)
 		printf("1\n");
