@@ -1,12 +1,13 @@
-# ignora o pdf dos trabalhos
+# ignores the project's requirements, wich are
+# downloadable as a .pdf file on the run.codes system
 *.pdf
 
-# ignora os executáveis gerados pela compilação
+# ignores the compiled files (to generate them, run "$ make all")
 *.bin
 
-# ignora o "release"
+# ignores the .zip "release", wich will be sent to the
+# run.codes system for the evaluation
 *.zip
 
-# ignora os casos de teste
-**/casos
-**/saidas
+# ignores the test stuff
+testing/*
