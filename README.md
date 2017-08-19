@@ -9,7 +9,7 @@ management and also, get to understand some basic low-level processes, as we stu
 a lot of computer's organization and architecture throughout the undergrad program. 
 
 To access the files of a project, simply switch to the branch which name matches
-the project's name.
+the project's name, as the master only contains common files.
 
 All projects will be written in english, except for the first, as I
 was stil working on the enviroment during the project's development,

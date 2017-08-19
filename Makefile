@@ -1,5 +1,5 @@
 # Project's name
-PROJECT = colisao
+PROJECT = 
 
 SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
