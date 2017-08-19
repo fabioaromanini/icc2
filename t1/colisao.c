@@ -90,12 +90,12 @@ int main(int argc, char *argv[]) {
 	// que reduz a caixa, de acordo com a posição do ponto
 	int n_max;
 	scanf("%d%*c", &n_max);
-	printf("%d\n", n_max);
+	// printf("%d\n", n_max);
 
 	// Número de triângulos que compõem o objeto
 	int n_triangulos;
 	scanf("%d%*c", &n_triangulos);
-	printf("%d\n", n_triangulos);
+	// printf("%d\n", n_triangulos);
 
 	// Coordenadas do ponto colisor:
 	ponto_t* ponto_colisor = ler_pontos(1);
@@ -128,9 +128,9 @@ int main(int argc, char *argv[]) {
 	// Uma vez que temos os dados necessários, executaremos
 	// o que detecta se houve colisão ou não.
 	if(colisao(objeto, caixa, *ponto_colisor, n_max))
-		printf("1 - RODO CERTIN\n");
+		printf("1\n");
 	else
-		printf("0 - FAIO\n");
+		printf("0\n");
 
 	free_malha(objeto);
 	free_caixa(caixa);
@@ -233,7 +233,7 @@ bool colisao(malha_t *objeto, caixa_t *caixa, ponto_t ponto_colisor, int n) {
 	   ponto_colisor[X] > caixa->pontos[MAX][X] ||
 	   ponto_colisor[Y] > caixa->pontos[MAX][Y] ||
 	   ponto_colisor[Z] > caixa->pontos[MAX][Z]) {
-		printf("Ponto fora da caixa inicial!\n");
+		// printf("Ponto fora da caixa inicial!\n");
 		return TRUE;
 	}
 
@@ -246,15 +246,19 @@ bool colisao(malha_t *objeto, caixa_t *caixa, ponto_t ponto_colisor, int n) {
 	// Agora, checaremos se o objeto intercepta o octante final.
 	for(int i = 0; i < objeto->n_triangulos; i++) {
 		for(int j = 0; j < 3; j++) {
-			// Primeiro, checaremos os vértices de todos os triangulos
+			// Primeiro, checaremos se existe algum vértice dos triângulos
+			// dentro dos limites da caixa
 			if(objeto->triangulos[i][j][X] >= caixa->pontos[MIN][X] && objeto->triangulos[i][j][X] >= caixa->pontos[MIN][X] &&
 			   objeto->triangulos[i][j][Y] >= caixa->pontos[MIN][Y] && objeto->triangulos[i][j][Y] >= caixa->pontos[MIN][Y] &&
 			   objeto->triangulos[i][j][Z] >= caixa->pontos[MIN][Z] && objeto->triangulos[i][j][Z] >= caixa->pontos[MIN][Z]) {
-				printf("INTERCEPTOU!\n");
-				printf("triangulo %d vertice %d\n", i, j);
-				print_ponto(objeto->triangulos[i][j]);
+				// printf("INTERCEPTOU!\n");
+				// printf("triangulo %d vertice %d\n", i, j);
+				// print_ponto(objeto->triangulos[i][j]);
 				return TRUE;
 			}
+
+			// Só falta detectar colisão entre as arestas do objeto e dos planos da caixa
+			// E depois dos planos do objeto e os planos da caixa
 
 		}
 	}
@@ -290,5 +294,5 @@ void escolher_octante(caixa_t *caixa, ponto_t ponto) {
 	else
 		caixa->pontos[MAX][Z] = meio;
 
-	print_caixa(caixa);
+	// print_caixa(caixa);
 }

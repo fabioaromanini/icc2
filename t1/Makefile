@@ -42,6 +42,7 @@ teste:
 	./$(EXECUTABLE) < casos/$(TESTE).in > saidas/$(TESTE).out
 
 testefull:
+	$(MAKE) all
 	$(foreach var,$(NUMBERS), ./$(EXECUTABLE) < casos/$(var).in > saidas/$(var).out; \
 )
 
