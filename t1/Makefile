@@ -7,10 +7,12 @@ EXECUTABLE = $(PROJECT).bin
 RELEASE = $(PROJECT).zip
 
 # Teste Unitário
-TESTE = 19
+TESTE = 3
 
-# Numero máximo de testes
-N_TESTE = 24
+# Lista dos testes automatizados
+COMECO := 1
+FIM := 24
+NUMBERS := $(shell seq ${COMECO} ${FIM})
 
 # Flags
 # 	-Wall = Warnings
@@ -24,21 +26,27 @@ N_TESTE = 24
 INFO = "Fábio Augusto Romanini Pinto\ngithub: fabioaromanini\nNúmero USP: 9791312\n\nRepositório da disciplina: github.com/fabioaromanini/icc2/\n\nA razão para usarmos executáveis com .bin é para \nque o .gitignore consiga reconhecer os arquivo facilmente.\n"
 
 all:
-	# $(MAKE) clean
 	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/
 
 run:
 	./$(EXECUTABLE)
 
 zip:
+	$(MAKE) cleanfull
 	$(MAKE) all
 	zip $(PROJECT).zip ./$(SOURCE) ./Makefile src/* inc/*
 
 teste:
+	$(MAKE) clean
 	$(MAKE) all
 	./$(EXECUTABLE) < casos/$(TESTE).in > saidas/$(TESTE).out
 
+testefull:
+	$(foreach var,$(NUMBERS), ./$(EXECUTABLE) < casos/$(var).in > saidas/$(var).out; \
+)
+
 leak:
+	$(MAKE) clean
 	$(MAKE) all
 	valgrind --leak-check=full ./$(EXECUTABLE) < casos/$(TESTE).in
 
@@ -48,13 +56,18 @@ ifneq (,$(wildcard $(EXECUTABLE)))
 	rm $(EXECUTABLE)
 endif
 
+cleancasos:
+ifneq (,$(wildcard casos/))
+	rm -rf casos
+endif
+
+cleanfull:
 ifneq (,$(wildcard $(RELEASE)))
 	rm $(RELEASE)
 endif
 
-cleancasos:
-ifneq (,$(wildcard casos/))
-	rm -rf casos
+ifneq (,$(wildcard $(EXECUTABLE)))
+	rm $(EXECUTABLE)
 endif
 
 install:
