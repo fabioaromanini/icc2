@@ -10,7 +10,3 @@ a lot of computer's organization and architecture throughout the undergrad progr
 
 To access the files of a project, simply switch to the branch which name matches
 the project's name, as the master only contains common files.
-
-All projects will be written in english, except for the first, as I
-was stil working on the enviroment during the project's development,
-and couldn't focus on a decent english on the time.

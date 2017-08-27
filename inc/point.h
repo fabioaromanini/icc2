@@ -12,7 +12,7 @@ enum {
 	X,
 	Y,
 	Z,
-	N_EIXOS
+	N_AXES,
 };
 
 point_t *read_points(int);
