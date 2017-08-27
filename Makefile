@@ -1,5 +1,5 @@
 # Project's name
-PROJECT = 
+PROJECT = maze-runner
 
 SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin

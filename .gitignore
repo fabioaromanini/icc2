@@ -9,5 +9,5 @@
 # run.codes system for the evaluation
 *.zip
 
-# ignores the test stuff
+# ignores the test files
 testing/*
