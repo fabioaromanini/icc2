@@ -5,11 +5,13 @@ SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
 RELEASE = $(PROJECT).zip
 
-TEST = 3
+TEST = 8
+
+# TODO: Create test example
 
 # List used to iterate trough the test files
 FIRST = 1
-LAST = 24
+LAST = 10
 NUMBERS = $(shell seq ${FIRST} ${LAST})
 
 # Compiler's flags
@@ -18,7 +20,7 @@ NUMBERS = $(shell seq ${FIRST} ${LAST})
 #	-o = output
 
 # Valgrind's flags
-#  --leak-check=full == see wich lines are causing the leak
+#  --leak-check=full == see wich lines are causing leak
 
 all:
 	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/
