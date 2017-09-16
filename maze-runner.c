@@ -3,11 +3,29 @@
 
 #include <bool.h>
 #include <graph.h>
+#include <stack.h>
+
 
 // in this program, we'll use a graph to represent
-// a labyrinth, and find all the possible ways out.
+// a labyrinth, and, given a starting point, search
+// trough the rooms in the labyrinth, printing all 
+// the possible paths and it's distance from the starting point.
+// in the proccess we may find a treasure room, wich gives us
+// a certain amount of points, and unlock/block passages.
+// if it happens, we'll then backtrack trough the labyrinth, 
+// searching for new ways out,now that we unlocked new rooms.
+
+// the problem as described in the pdf, does not consider every 
+// point in the labyrinth to be a room. but, in order to make 
+// the data structures simpler, i'm representing both the
+// points and the rooms as vertexes in the graph l.
 // the edges will represent the passages that links
-// two or more vertexes, wich will represent the rooms
+// two or more points. a existing passage between to points
+// may be blocked, in this case, we'll use the weight of the
+// graph's edges to represent the 
+
+
+// FUNCTIONS
 
 // function that links two rooms in the
 // labyrinth, creating a edge in the graph.
@@ -27,22 +45,24 @@ void link_rooms(graph_t* l, int from, int to) {
 }
 
 int main(int argc, char const *argv[]) {
-	int n_vtx;
-	scanf("%d ", &n_vtx);
-
-	graph_t *l = graph_init(n_vtx);
 	
-	// the user will index the rooms from 1 
-	// up to the number of rooms in the labyrinht
-	for(int i = 1; i <= n_vtx; i++) {
+	// inputs:
+	int n_points;
+	scanf("%d ", &n_points);
+
+	graph_t *l = graph_init(n_points);
+	
+	// the input will index the rooms from 1 
+	// up to the number of rooms
+	for(int i = 1; i <= n_points; i++) {
 		float x, y;
 		scanf("%f %f ", &x, &y);
 
 		l->vtx[i].x = x;
 		l->vtx[i].y = y;
 
-		l->vtx[i].is_exit = FALSE;
-		l->vtx[i].is_treasure = FALSE;
+		l->vtx[i].is_exit = false;
+		l->vtx[i].is_treasure = false;
 	}
 
 	int n_rooms;
@@ -53,7 +73,7 @@ int main(int argc, char const *argv[]) {
 
 		scanf("%d %d ", &idx, (int *) &is_exit);
 
-		if(idx > 0 && idx <= n_vtx)
+		if(idx > 0 && idx <= n_rooms)
 			l->vtx[idx].is_exit = is_exit;
 	}
 	
@@ -69,17 +89,18 @@ int main(int argc, char const *argv[]) {
 	}
 
 	int start;
-	int treasure_room;
-	int treausre_points;
-	int n_alterations;
 	scanf("%d ", &start);
-	
+
+	int treasure_room = -1;
+	int treasure_points = 0;
+	int n_alterations = 0;
+
 	// if the file ended, there is no treasure room.
 	// this means that there will be no treasure points
 	// and no alterations will happen in the labyrinth.
 	if(!feof(stdin)) {
 		treasure_room = start;
-		scanf("%d ", &treausre_points);
+		scanf("%d ", &treasure_points);
 		scanf("%d ", &n_alterations);
 
 		for(int i = 0; i < n_alterations; i++) {
@@ -93,32 +114,56 @@ int main(int argc, char const *argv[]) {
 		scanf("%d ", &start);
 	}
 
-	printf("n_vtx: %d\n", n_vtx);
-	printf("n_rooms: %d\n", n_vtx);
-	for(int i = 1; i <= n_vtx; i++) {
-		printf("Vertex[%d]:\n", i);
-		printf("\tx: %f\n", l->vtx[i].x);
-		printf("\ty: %f\n", l->vtx[i].y);
+	stack_t *next_rooms = stack_init(n_points);
 
-		if(l->vtx[i].is_exit)
-			printf("This is a exit chamber\n");
-		if(l->vtx[i].is_treasure)
-			printf("This is a treasure chamber\n");
-		printf("\n");
-		printf("\n");
-	}
+	// outputs:
+	// printf("%d %d\n", treasure_room, treasure_points);
 
-	printf("start: %d\n", start);
-	if(treasure_room) {
-		printf("treasure_room: %d treausre_points: %d\n", treasure_room, treausre_points);
-	} else {
-		printf("no treasure_room\n");
-	}
+	// LOG
+	// printf("n_points: %d\n", n_points);
+	// printf("n_rooms: %d\n", n_rooms);
+	// for(int i = 1; i <= n_points; i++) {
+	// 	printf("Vertex[%d]:\n", i);
+	// 	printf("\tx: %f\n", l->vtx[i].x);
+	// 	printf("\ty: %f\n", l->vtx[i].y);
 
-	for(int i = 1; i <= n_vtx; i++)
-		for(int j = 1; j <= n_vtx; j++)
-			if(l->edg[i][j]) printf("%d links to %d\n", i, j);	
+	// 	if(l->vtx[i].is_exit)
+	// 		printf("This is a exit chamber\n");
+	// 	if(l->vtx[i].is_treasure)
+	// 		printf("This is a treasure chamber\n");
+	// 	printf("\n");
+	// 	printf("\n");
+	// }
+
+	// printf("start: %d\n", start);
+	// if(treasure_room) {
+	// 	printf("treasure_room: %d treasure_points: %d\n", treasure_room, treasure_points);
+	// } else {
+	// 	printf("no treasure_room\n");
+	// }
+
+	// printf("links:\n\n");
+	// for(int i = 1; i <= n_points; i++)
+	// 	for(int j = 1; j <= n_points; j++)
+	// 		if(l->edg[i][j]) printf("%d links to %d\n", i, j);
+
+	// printf("stack test:\n\n");
+	// for(int i = 0; i < n_points; i++) {
+	// 	push(next_rooms, i);
+	// }
+	// printf("stack size: %d\n", next_rooms->size);
+	// printf("stack max_size: %d\n\n", next_rooms->max_size);
+
+	// while(is_not_empty(next_rooms)) {
+	// 	printf("%d\n", pop(next_rooms));
+	// 	printf("stack size: %d\n", next_rooms->size);
+	// 	printf("stack max_size: %d\n\n", next_rooms->max_size);
+	// }
+
+	// printf("stack size: %d\n", next_rooms->size);
+	// printf("stack max_size: %d\n\n", next_rooms->max_size);		
 
 	graph_destroy(l);
+	stack_destroy(next_rooms);
 	return 0;
 }
