@@ -5,7 +5,7 @@ SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
 RELEASE = $(PROJECT).zip
 
-TEST = 8
+TEST = 6
 
 # TODO: Create test example
 
@@ -23,7 +23,7 @@ NUMBERS = $(shell seq ${FIRST} ${LAST})
 #  --leak-check=full == see wich lines are causing leak
 
 all:
-	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/
+	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/ -lm
 
 run:
 	./$(EXECUTABLE)
@@ -65,9 +65,18 @@ organizetests:
 	mkdir testing/output
 	mv testing/*.out testing/output/ 
 	mkdir testing/my_output
+	mkdir testing/my_leak_output
 	rm testing/README.txt
 
 leak:
 	$(MAKE) clean
 	$(MAKE) all
 	valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(TEST).in
+
+leakfull:
+	$(MAKE) all
+	$(foreach var,$(NUMBERS), valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in > testing/my_leak_output/$(var).out;)
+
+leakfulllog:
+	$(MAKE) all
+	$(foreach var,$(NUMBERS), valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in;)
