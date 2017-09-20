@@ -21,8 +21,7 @@ NUMBERS = $(shell seq ${FIRST} ${LAST})
 #  --leak-check=full == see wich lines are causing leak
 
 all:
-# gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/ -lm
-	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) -Iinc/
+	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/ -lm
 
 run:
 	./$(EXECUTABLE)

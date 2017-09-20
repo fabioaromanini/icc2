@@ -2,6 +2,11 @@
 #include <stdio.h> 
 #include <ctype.h>
 
+#include <bool.h>
+#include <stack.h>
+
+#define N_DELIMITERS 200
+
 enum {
 	OBJECTS,
 	ARRAYS,
@@ -14,13 +19,13 @@ enum {
 	ANS_SIZE
 };
 
-int issign(char c) {
+bool issign(char c) {
 	return c == '-' || c == '+';
 }
 
-int isnumber(FILE *fp) {
-	int exponent = 0;
-	int fraction = 0;
+bool isnumber(FILE *fp) {
+	bool exponent = false;
+	bool fraction = false;
 	
 	while(!feof(fp)) {
 		char c = fgetc(fp);
@@ -29,22 +34,22 @@ int isnumber(FILE *fp) {
 		else if(c == '.') {
 		
 			if(fraction)
-				return 0;
-			fraction = 1;
+				return false;
+			fraction = true;
 		
 			c = fgetc(fp);
 			
 			if(!isdigit(c))
-				return 0;
+				return false;
 
 			continue;
 		}
 		else if(c == 'e' || c == 'E') {
 		
 			if(exponent)
-				return 0;
-			exponent = 1;
-			fraction = 1; // we cannot have a real number on the exponent
+				return false;
+			exponent = true;
+			fraction = true; // we cannot have a real number on the exponent
 
 			c = fgetc(fp);
 
@@ -52,131 +57,145 @@ int isnumber(FILE *fp) {
 				c = fgetc(fp);
 				
 				if(!isdigit(c))
-					return 0;
+					return false;
 			}
 			else if(!isdigit(c))
-				return 0;
+				return false;
 
 			continue;
 		}
 		else if(c == ']' || c == '}' || c == ',' || c == EOF) {
 			fseek(fp, -1, SEEK_CUR);
-			return 1;
+			return true;
 		}
 		else
-			return 0;
+			return false;
 	}
+
+	return false;
 }
 
-int istrue(FILE *fp) {
+bool istrue(FILE *fp) {
 	int position = 1; 
-	const char true[4] = "true";
+	const char true_st[4] = "true";
 
 	while(!feof(fp) && position < 4) {
 		char c = fgetc(fp);
 		
-		if(c != true[position]) {
-			return 0;
+		if(c != true_st[position]) {
+			return false;
 		}
 
 		position++;
 	}
 
-	return 1;
+	return true;
 }
 
 int isfalse(FILE *fp) {
 	int position = 1; 
-	const char false[5] = "false";
+	const char false_st[5] = "false";
 
 	while(!feof(fp) && position < 5) {
 		char c = fgetc(fp);
 		
-		if(c != false[position]) {
-			return 0;
+		if(c != false_st[position]) {
+			return false;
 		}
 
 		position++;
 	}
 
-	return 1;
+	return true;
 }
 
-int isnull(FILE *fp) {
+bool isnull(FILE *fp) {
 	int position = 1; 
-	const char null[4] = "null";
+	const char null_st[4] = "null";
 
 	while(!feof(fp) && position < 4) {
 		char c = fgetc(fp);
 		
-		if(c != null[position]) {
-			return 0;
+		if(c != null_st[position]) {
+			return false;
 		}
 
 		position++;
 	}
 
-	return 1;
+	return true;
 }
 
 int main(int argc, char const *argv[]) {
 	FILE *json_file = stdin;
 	int *answer = (int *) calloc(ANS_SIZE, sizeof(int));
-	int error = 0;
+	bool error = false;
 	int line = 1;
+	stack_t* delimiters = stack_init(N_DELIMITERS);
 
 	while(!feof(json_file)) {
 		char c = fgetc(json_file);
+
 		if(c == '{') {
-			// pop at stack
-			answer[OBJECTS]++;
+			push(delimiters, '{');
+		}
+		else if(c == '}') {
+			if(pop(delimiters) != '{')
+				error = true;
+			else
+				answer[OBJECTS]++;
 		}
 		else if(c == '[') {
-			// pop at stack
-			answer[ARRAYS]++;
+			push(delimiters, '[');
+		}
+		else if(c == ']') {
+			if(pop(delimiters) != '[')
+				error = true;
+			else
+				answer[ARRAYS]++;
 		}
 		else if(isdigit(c)) {
 			
 			if(isnumber(json_file)) {
 				answer[NUMBERS]++;
-				printf("NUMBER");
+				// printf("NUMBER");
 				continue;
 			}
 
-			error = 1;
+			error = true;
 			break;
 		}
 		else if(c == 't') {
 			
 			if(istrue(json_file)) {
 				answer[TRUES]++;
-				printf("TRUE");
+				// printf("TRUE");
 				continue;
 			}
 
-			error = 1;
+			error = true;
 			break;
 		}
 		else if(c == 'f') {
 			
 			if(isfalse(json_file)) {
 				answer[FALSES]++;
-				printf("FALSE");
+				// printf("FALSE");
 				continue;
 			}
 
-			error = 1;
+			error = true;
 			break;
 		}
 		else if(c == 'n') {
 			
 			if(isnull(json_file)) {
 				answer[NULLS]++;
-				printf("NULL");
+				// printf("NULL");
 				continue;
 			}
 
-			error = 1;
+			error = true;
 			break;
 		}
 		else if(c == EOF || isblank(c)) {
@@ -188,14 +207,17 @@ int main(int argc, char const *argv[]) {
 		if(error)
 			break;
 
-		printf("%c", c);
+		// printf("%c", c);
 	}
+
+	if(!is_empty(delimiters))
+		error = true;
 
 	if(error)
 		printf("Error line %d\n", line);
 
-	printf("\nFinished file!\n");
-	printf("\nthe file had %d lines!\n", line);
+	// printf("\nFinished file!\n");
+	// printf("\nthe file had %d lines!\n", line);
 
 	printf("Number of Objects: %d\n", answer[OBJECTS]);
 	printf("Number of Arrays: %d\n", answer[ARRAYS]);
@@ -205,7 +227,8 @@ int main(int argc, char const *argv[]) {
 	printf("Number of Trues: %d\n", answer[TRUES]);
 	printf("Number of Falses: %d\n", answer[FALSES]);
 	printf("Number of Nulls: %d\n", answer[NULLS]);
-	
+
+	stack_destroy(delimiters);	
 	free(answer);
 	return 0;
 }
