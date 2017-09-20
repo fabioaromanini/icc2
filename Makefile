@@ -9,7 +9,7 @@ TEST = 1
 
 # List used to iterate trough the test files
 FIRST = 1
-LAST = 10
+LAST = 16
 NUMBERS = $(shell seq ${FIRST} ${LAST})
 
 # Compiler's flags
@@ -73,8 +73,8 @@ leak:
 
 leakfull:
 	$(MAKE) all
-	$(foreach var,$(NUMBERS), valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in > testing/my_leak_output/$(var).out;)
+	$(foreach var,$(NUMBERS), echo '$(var)'; valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in > testing/my_leak_output/$(var).out;)
 
 leakfulllog:
 	$(MAKE) all
-	$(foreach var,$(NUMBERS), valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in;)
+	$(foreach var,$(NUMBERS), echo '$(var)'; valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in;)

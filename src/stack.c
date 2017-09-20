@@ -15,17 +15,17 @@ bool is_empty(stack_t *s) {
 
 bool is_in_stack(stack_t *s, item_t element) {
 	for(int i = 0; i < s->size; i++) {
-		if(s->elmts[i] == element) return true;
+		if(s->elmts[i] == element) return TRUE;
 	}
-	return false;
+	return FALSE;
 }
 
 bool push(stack_t *s, item_t element) {
 	if(s->size < s->max_size) {
 		s->elmts[(s->size)++] = element;
-		return true;
+		return TRUE;
 	}
-	return false;
+	return FALSE;
 }
 
 item_t get_elmnt_at(stack_t *s, int position) {
