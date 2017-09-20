@@ -1,15 +1,15 @@
 # Project's name
-PROJECT = 
+PROJECT = json-parser
 
 SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
 RELEASE = $(PROJECT).zip
 
-TEST = 3
+TEST = 1
 
 # List used to iterate trough the test files
 FIRST = 1
-LAST = 24
+LAST = 10
 NUMBERS = $(shell seq ${FIRST} ${LAST})
 
 # Compiler's flags
@@ -18,16 +18,17 @@ NUMBERS = $(shell seq ${FIRST} ${LAST})
 #	-o = output
 
 # Valgrind's flags
-#  --leak-check=full == see wich lines are causing the leak
+#  --leak-check=full == see wich lines are causing leak
 
 all:
-	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/
+# gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/ -lm
+	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) -Iinc/
 
 run:
 	./$(EXECUTABLE)
 
 clean:
-# Check if there is any executable before trying to remove
+# Check if there is any executable before removing
 ifneq (,$(wildcard $(EXECUTABLE)))
 	rm $(EXECUTABLE)
 endif
@@ -63,9 +64,18 @@ organizetests:
 	mkdir testing/output
 	mv testing/*.out testing/output/ 
 	mkdir testing/my_output
+	mkdir testing/my_leak_output
 	rm testing/README.txt
 
 leak:
 	$(MAKE) clean
 	$(MAKE) all
 	valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(TEST).in
+
+leakfull:
+	$(MAKE) all
+	$(foreach var,$(NUMBERS), valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in > testing/my_leak_output/$(var).out;)
+
+leakfulllog:
+	$(MAKE) all
+	$(foreach var,$(NUMBERS), valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in;)
