@@ -5,7 +5,7 @@ SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
 RELEASE = $(PROJECT).zip
 
-TEST = 1
+TEST = 14
 
 # List used to iterate trough the test files
 FIRST = 1
@@ -21,7 +21,7 @@ NUMBERS = $(shell seq ${FIRST} ${LAST})
 #  --leak-check=full == see wich lines are causing leak
 
 all:
-	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/ -lm
+	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/
 
 run:
 	./$(EXECUTABLE)

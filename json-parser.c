@@ -130,20 +130,39 @@ bool isnull(FILE *fp) {
 	return TRUE;
 }
 
-// bool isstring(FILE *fp) {
-	// int position = 1;
+bool isstring(FILE *fp) {
+	if(feof(fp))
+		return FALSE;
 
-	// while(!feof(fp) && c != '\"') { // '\"' => character that
+	char c = fgetc(fp);
+	if(c == '\"')					// Can't be an empty string according to
+		return FALSE;				// case 15
+	fseek(fp, -1, SEEK_CUR);
+
+	while(!feof(fp) && c != '\"'){	// " => character that
 									// terminates a string
-		// char c = fgetc(fp);
-		// if(c != )
-			// return FALSE;
-
-		// position++;
-	// }
-
-	// return TRUE;
-// }
+		c = fgetc(fp);
+		if(c == '\\') {
+			if(!feof(fp))			// If the file ended, we wont get any char.
+				c = fgetc(fp);		// Thus, we'll end up using '\' again,
+									// which will invalidate the string token
+			bool invalid = FALSE;	// here
+			invalid += (c == '\\'); // <<<<
+			invalid += (c == '\"');
+			invalid += (c == EOF); 
+			invalid += (c == 'b');
+			invalid += (c == 'f');
+			invalid += (c == 'n');
+			invalid += (c == 'r');
+			invalid += (c == 't');
+			invalid += (c == 'u');
+			
+			if(invalid) return FALSE;
+		}
+	}
+	
+	return TRUE;
+}
 
 int main(int argc, char const *argv[]) {
 	FILE *json_file = stdin;
@@ -152,7 +171,6 @@ int main(int argc, char const *argv[]) {
 	int line = 1;
 	stack_t* delimiters = stack_init(N_DELIMITERS);
 
-	// eventually, this will become a recursion
 	while(!feof(json_file)) {
 		char c = fgetc(json_file);
 
@@ -173,6 +191,35 @@ int main(int argc, char const *argv[]) {
 				error = TRUE;
 			else
 				answer[ARRAYS]++;
+		}
+		else if(c == '\"') {
+
+			if(isstring(json_file)) {
+				answer[STRINGS]++;
+				printf("STRING");
+				continue;
+			}
+
+			error = TRUE;
+			break;
+		}
+		else if(issign(c)) {
+			c = fgetc(json_file);
+
+			if(!isdigit(c)) {
+				error = TRUE;
+				break;
+			}
+
+			fseek(json_file, -1, SEEK_CUR);
+			if(isnumber(json_file)) {
+				answer[NUMBERS]++;
+				printf("NUMBER");
+				continue;
+			}
+
+			error = TRUE;
+			break;
 		}
 		else if(isdigit(c)) {
 			
