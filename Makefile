@@ -78,4 +78,3 @@ leakfull:
 leakfulllog:
 	$(MAKE) all
 	$(foreach var,$(NUMBERS), echo '$(var)'; valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in;)
-).in;)
