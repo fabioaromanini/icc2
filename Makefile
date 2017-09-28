@@ -1,17 +1,15 @@
 # Project's name
-PROJECT = maze-runner
+PROJECT = 
 
 SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
 RELEASE = $(PROJECT).zip
 
-TEST = 6
-
-# TODO: Create test example
+TEST = 0
 
 # List used to iterate trough the test files
 FIRST = 1
-LAST = 10
+LAST = 16
 NUMBERS = $(shell seq ${FIRST} ${LAST})
 
 # Compiler's flags
@@ -23,13 +21,13 @@ NUMBERS = $(shell seq ${FIRST} ${LAST})
 #  --leak-check=full == see wich lines are causing leak
 
 all:
-	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/ -lm
+	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/
 
 run:
 	./$(EXECUTABLE)
 
 clean:
-# Check if there is any executable before trying to remove
+# Check if there is any executable before removing
 ifneq (,$(wildcard $(EXECUTABLE)))
 	rm $(EXECUTABLE)
 endif
@@ -46,8 +44,8 @@ zip:
 	zip $(PROJECT).zip ./$(SOURCE) ./Makefile src/* inc/* README.txt
 
 cleantesting:
-ifneq (,$(wildcard testing/))
-	rm -rf testing
+ifneq (,$(wildcard testing/*))
+	rm -rf testing/*
 endif
 
 test:
@@ -75,8 +73,9 @@ leak:
 
 leakfull:
 	$(MAKE) all
-	$(foreach var,$(NUMBERS), valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in > testing/my_leak_output/$(var).out;)
+	$(foreach var,$(NUMBERS), echo '$(var)'; valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in > testing/my_leak_output/$(var).out;)
 
 leakfulllog:
 	$(MAKE) all
-	$(foreach var,$(NUMBERS), valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in;)
+	$(foreach var,$(NUMBERS), echo '$(var)'; valgrind --leak-check=full ./$(EXECUTABLE) < testing/input/$(var).in;)
+).in;)
