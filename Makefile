@@ -5,7 +5,7 @@ SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
 RELEASE = $(PROJECT).zip
 
-TEST = 14
+TEST = 10
 
 # List used to iterate trough the test files
 FIRST = 1
@@ -44,8 +44,8 @@ zip:
 	zip $(PROJECT).zip ./$(SOURCE) ./Makefile src/* inc/* README.txt
 
 cleantesting:
-ifneq (,$(wildcard testing/))
-	rm -rf testing
+ifneq (,$(wildcard testing/*))
+	rm -rf testing/*
 endif
 
 test:
