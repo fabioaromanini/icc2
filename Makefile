@@ -5,7 +5,7 @@ SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
 RELEASE = $(PROJECT).zip
 
-TEST = 10
+TEST = 0
 
 # List used to iterate trough the test files
 FIRST = 1
