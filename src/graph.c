@@ -13,12 +13,6 @@ graph_t *graph_init(int n_vtx) {
 	return g;
 }
 
-
-float get_distance(graph_t *l, int node1, int node2) {
-	return sqrt(pow(l->vtx[node1].x - l->vtx[node2].x, 2) +
-				pow(l->vtx[node1].y - l->vtx[node2].y, 2));
-}
-
 void graph_destroy(graph_t *g) {
 	for(int i = 1; i <= g->n_vtx; i++)
 		free(g->edg[i]);

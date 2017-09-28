@@ -1,6 +1,6 @@
 # SCC0201 - Introduction to Computer Science II (Introdução a Ciência da Computação II)
 
-[Link for the course syllabus link](https://uspdigital.usp.br/jupiterweb/obterDisciplina?sgldis=SCC0201&nomdis=)
+[Link for the course syllabus](https://uspdigital.usp.br/jupiterweb/obterDisciplina?sgldis=SCC0201&nomdis=)
 
 I wanted to create a cool enviroment to work on my undergrad course ICS II,
 so I used git as the VCS, and GNU Makefile to automate some tasks.
