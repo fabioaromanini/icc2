@@ -1,15 +1,15 @@
 # Project's name
-PROJECT = 
+PROJECT = process-scheduler
 
 SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
 RELEASE = $(PROJECT).zip
 
-TEST = 0
+TEST = 1
 
 # List used to iterate trough the test files
 FIRST = 1
-LAST = 16
+LAST = 12
 NUMBERS = $(shell seq ${FIRST} ${LAST})
 
 # Compiler's flags
@@ -21,7 +21,7 @@ NUMBERS = $(shell seq ${FIRST} ${LAST})
 #  --leak-check=full == see wich lines are causing leak
 
 all:
-	gcc -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/
+	gcc -std=c99 -g -Wall -o $(EXECUTABLE) $(SOURCE) src/*.c -Iinc/
 
 run:
 	./$(EXECUTABLE)
