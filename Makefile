@@ -5,7 +5,7 @@ SOURCE = $(PROJECT).c
 EXECUTABLE = $(PROJECT).bin
 RELEASE = $(PROJECT).zip
 
-TEST = 1
+TEST = 3
 
 # List used to iterate trough the test files
 FIRST = 1
@@ -52,6 +52,11 @@ test:
 	$(MAKE) clean
 	$(MAKE) all
 	./$(EXECUTABLE) < testing/input/$(TEST).in > testing/my_output/$(TEST).out
+
+testlog:
+	$(MAKE) clean
+	$(MAKE) all
+	./$(EXECUTABLE) < testing/input/$(TEST).in
 
 testfull:
 	$(MAKE) all
